@@ -27,11 +27,21 @@ pip install rag_evaluation
 
 ### Usage
 
-import openai
-from rag_evaluation import get_openai_key, evaluate_response
+# import evaluate_response
+from gpt_evaluation.evaluator import evaluate_response
+
+
 
 ## Set the API key (either via environment or by providing a default)
+os.environ["OPENAI_API_KEY"] = "###"
+
+## OR
+
+# import API key config
+from gpt_evaluation.config import get_openai_key
+
 api_key = get_openai_key("OPENAI_API_KEY")
+
 
 # Define your inputs
 query = "Which large language model is currently the largest and most capable?"
@@ -51,7 +61,7 @@ document = """A large language model (LLM) is a type of machine learning model d
 report = evaluate_response(query, response_text, document, model="gpt-4o-mini")
 print(report)
 
-**This function returns a pandas DataFrame with:**
+**This function returns a pandas dataframe with:**
 
 Metric Names: Query Relevance, Factual Accuracy, Coverage, Coherence, Fluency.
 

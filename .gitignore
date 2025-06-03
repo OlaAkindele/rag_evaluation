@@ -1,6 +1,23 @@
-.env
-.DS_Store
-.vscode
-__pycache__
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+*.env
+*.venv/
 venv/
+.env
+
+# === VSCode ===
+.vscode/
+
+# === Ignore local Git ignores ===
+!.gitignore
+
+
+
+# === Others ===
+.DS_Store
 gpt_localtest_script.py

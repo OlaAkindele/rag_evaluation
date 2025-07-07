@@ -6,7 +6,8 @@ by scoring generated responses across various metrics.
 """
 
 from .config import get_openai_key
-from .evaluator import evaluate, evaluate_all, evaluate_response
+from .evaluator import (evaluate_all, evaluate_response,
+                            evaluate_openai, evaluate_gemini,)
 from .metrics import (
     EVALUATION_PROMPT_TEMPLATE,
     QUERY_RELEVANCE_CRITERIA, QUERY_RELEVANCE_STEPS,
@@ -23,6 +24,8 @@ __all__ = [
     "evaluate_all",
     "evaluate_response",
     "normalize_score",
+    "evaluate_openai",
+    "evaluate_gemini",
     "calculate_weighted_accuracy",
     "generate_report",
     "EVALUATION_PROMPT_TEMPLATE",

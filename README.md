@@ -24,14 +24,36 @@ It integrates easily with the OpenAI API via openai and automatically handles en
 
 ```bash
 pip install rag_evaluation
+```
+### Usage for Ollama models
 
-### Usage
+```python
+#checks openai compatible models available on local machine
+from openai import OpenAI
 
-# import evaluate_response
+client = OpenAI(
+    api_key='ollama',
+    base_url="http://localhost:11434/v1"
+)
+
+# List all available models
+models = client.models.list()
+print(models.to_json())
+```
+```python
+# Use ollama model (no need for api key)
 from gpt_evaluation.evaluator import evaluate_response
 
-
-
+response = evaluate_response(
+    query=query,
+    response=response,
+    document=document,
+    model_type="ollama",
+    model_name= 'llama3.2:1b',
+)
+```
+```bash
+## Usage for OpenAI models
 ## Set the API key (either via environment or by providing a default)
 os.environ["OPENAI_API_KEY"] = "###"
 
@@ -71,3 +93,4 @@ Percentage Scores: The normalized score expressed as a percentage.
 
 Overall Accuracy: A weighted average score across all metrics.
 
+```

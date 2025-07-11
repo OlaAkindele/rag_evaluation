@@ -2,3 +2,9 @@ numpy
 pandas
 openai
 dotenv
+google-genai
+transformers>=4.30.0
+torch>=2.0.0
+accelerate>=0.20.0
+sentencepiece>=0.1.97
+protobuf>=3.20.0

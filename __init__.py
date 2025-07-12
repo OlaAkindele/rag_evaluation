@@ -31,7 +31,7 @@ from .rag_evaluation import (
 )
 
 # define a version string or other metadata.
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 __all__ = [
     "get_api_key",

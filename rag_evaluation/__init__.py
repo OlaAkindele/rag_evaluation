@@ -5,7 +5,7 @@ Provides tools for evaluating Retrieval-Augmented Generation (RAG) projects
 by scoring generated responses across various metrics.
 """
 
-from .config import get_openai_key
+from .config import get_api_key
 from .evaluator import (evaluate_all, evaluate_response,
                             evaluate_openai, evaluate_gemini,)
 from .metrics import (
@@ -19,7 +19,7 @@ from .metrics import (
 from .utils import normalize_score, calculate_weighted_accuracy, generate_report
 
 __all__ = [
-    "get_openai_key",
+    "get_api_key",
     "evaluate",
     "evaluate_all",
     "evaluate_response",

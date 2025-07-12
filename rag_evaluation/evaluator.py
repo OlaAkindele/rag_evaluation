@@ -57,7 +57,7 @@ def evaluate_openai(criteria: str, steps: str, query: str, document: str, respon
             model=model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0,
-            max_tokens=1000,
+            max_tokens=8192,
         )
         # print(resp.choices[0].message.content)
         return int(resp.choices[0].message.content.strip())
@@ -144,7 +144,7 @@ def evaluate_response(query: str, response: str, document: str,
         "Coherence": (COHERENCE_SCORE_CRITERIA, COHERENCE_SCORE_STEPS),
         "Fluency": (FLUENCY_SCORE_CRITERIA, FLUENCY_SCORE_STEPS),
     }
-    default_weights = [0.25, 0.25, 0.25, 0.125, 0.125] #[2, 2, 2, 1, 1]
+    default_weights = [0.25, 0.25, 0.25, 0.125, 0.125]  # [0.25, 0.25, 0.25, 0.125, 0.125]  = 1.00
 
     if model_type.lower() == "openai" and "openai_client" not in kwargs:
         kwargs["openai_client"] = openai
@@ -152,7 +152,7 @@ def evaluate_response(query: str, response: str, document: str,
     elif model_type.lower() == "ollama" and "ollama_client" not in kwargs:
         kwargs["ollama_client"] = openai.OpenAI(
             base_url='http://localhost:11434/v1', 
-            api_key="ollama"  #works for llama and mistral models
+            api_key="ollama"  #works for llama, quewen, and mistral models
         )
     elif model_type.lower() == "gemini" and "gemini_client" not in kwargs:
         kwargs["gemini_client"] = genai.Client()

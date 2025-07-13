@@ -17,9 +17,10 @@ classifiers = [
 ]
 
 dependencies = [
+  "openai>=0.27,<1.56",
+  "httpx>=0.27.2,<0.28",
   "numpy",
   "pandas>=1.0",
-  "openai>=0.27",
   "python-dotenv>=0.21",
   "google-genai>=0.1.0",
   "transformers>=4.30.0",

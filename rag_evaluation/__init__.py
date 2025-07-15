@@ -6,6 +6,7 @@ by scoring generated responses across various metrics.
 """
 
 from .config import get_api_key
+from .config import set_api_key
 from .evaluator import (evaluate_all, evaluate_response,
                             evaluate_openai, evaluate_gemini,)
 from .metrics import (
@@ -20,7 +21,7 @@ from .utils import normalize_score, calculate_weighted_accuracy, generate_report
 
 __all__ = [
     "get_api_key",
-    "evaluate",
+    "set_api_key",
     "evaluate_all",
     "evaluate_response",
     "normalize_score",

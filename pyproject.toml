@@ -17,12 +17,12 @@ classifiers = [
 ]
 
 dependencies = [
-  "openai>=0.27,<1.56",
-  "httpx>=0.27.2,<0.28",
-  "numpy",
-  "pandas>=1.0",
+  "numpy>=1.25",
+  "pandas>=2.0",
   "python-dotenv>=0.21",
-  "google-genai>=0.1.0",
+  "openai>=1.58.1,<2",
+  "google-genai>=1.15,<2",
+  "httpx>=0.28.1,<1",
   "transformers>=4.30.0",
   "torch>=2.0.0",
   "accelerate>=0.20.0",
@@ -45,4 +45,8 @@ requires = [
   "setuptools>=61.0",
   "wheel"
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 build-backend = "setuptools.build_meta"

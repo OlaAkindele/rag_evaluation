@@ -5,6 +5,7 @@ import torch
 from google import genai
 from google.genai import types
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from .config import get_api_key
 from .utils import (
     normalize_score, calculate_weighted_accuracy,
     generate_report
@@ -16,6 +17,7 @@ from .metrics import (
     COHERENCE_SCORE_CRITERIA, COHERENCE_SCORE_STEPS,
     FLUENCY_SCORE_CRITERIA, FLUENCY_SCORE_STEPS,
 )
+
 
 class LlamaEvaluator:    
     def __init__(self):
@@ -65,38 +67,41 @@ def evaluate_openai(criteria: str, steps: str, query: str, document: str, respon
         raise RuntimeError(f"OpenAI evaluation API call failed: {e}")
 
 
-def evaluate_gemini(criteria: str, steps: str, query: str, document: str, response: str,
-                    metric_name: str, client: Any, model: str) -> int:
+
+def evaluate_gemini(criteria: str, steps: str, query: str, document: str,
+                    response: str, metric_name: str, client, model: str) -> int:
     prompt = EVALUATION_PROMPT_TEMPLATE.format(
-        criteria=criteria,
-        steps=steps,
-        metric_name=metric_name,
-        query=query,
-        document=document,
-        response=response,
+        criteria=criteria, steps=steps, metric_name=metric_name,
+        query=query, document=document, response=response
+    )
+
+    # build the new GenerateContentConfig
+    gen_cfg = types.GenerateContentConfig(
+        temperature=0.0,
+        max_output_tokens=16_300,
     )
     try:
-        response = client.models.generate_content(
-                            model=model,
-                            contents=prompt,
-                            config=types.GenerateContentConfig(
-                                temperature=0.0,
-                                max_output_tokens=16300,
-                                thinking_config=types.ThinkingConfig(thinking_budget=0) #disables thinking
-                            )
-                        )
-    except Exception as e:
-        raise RuntimeError(f"Gemini evaluation API call failed: {e}")
+        # NEW SDK signature (>= 1.0)
+        gem_resp = client.models.generate_content(
+            model=model,
+            contents=prompt,        # a plain str is fine; SDK converts it
+            config=gen_cfg,
+        )
+    except TypeError:
+        # fallback for very old (< 0.8) SDKs that still want generation_config
+        gem_resp = client.models.generate_content(
+            model=model,
+            contents=[prompt],
+            generation_config=types.GenerationConfig(**gen_cfg.model_dump()),
+        )
 
-    raw = getattr(response, 'text', None)
-    if not raw and hasattr(response, 'candidates') and response.candidates:
-        candidate = response.candidates[0]
-        raw = getattr(candidate, 'content', None) or getattr(candidate, 'text', None)
-
+    raw = getattr(gem_resp, "text", None) \
+          or (gem_resp.candidates[0].content if gem_resp.candidates else None)
     if not raw:
-        raise RuntimeError(f"No content returned by Gemini (got: {response!r})")
+        raise RuntimeError(f"No content returned by Gemini (got: {gem_resp!r})")
 
-    return int(raw.replace("```json\n", "").replace("```", "").strip())
+    return int(raw.replace("\n", "").strip())
+
 
 
 def evaluate_all(metrics: Dict[str, Tuple[str, str]], query: str, response: str,
@@ -146,7 +151,10 @@ def evaluate_response(query: str, response: str, document: str,
     }
     default_weights = [0.25, 0.25, 0.25, 0.125, 0.125]  # [0.25, 0.25, 0.25, 0.125, 0.125]  = 1.00
 
+    # if model_type.lower() == "openai" and "openai_client" not in kwargs:
+    #     kwargs["openai_client"] = openai
     if model_type.lower() == "openai" and "openai_client" not in kwargs:
+        openai.api_key = get_api_key("openai")
         kwargs["openai_client"] = openai
 
     elif model_type.lower() == "ollama" and "ollama_client" not in kwargs:
@@ -154,8 +162,11 @@ def evaluate_response(query: str, response: str, document: str,
             base_url='http://localhost:11434/v1', 
             api_key="ollama"  #works for llama, quewen, and mistral models
         )
+    # elif model_type.lower() == "gemini" and "gemini_client" not in kwargs:
+    #     kwargs["gemini_client"] = genai.Client()
     elif model_type.lower() == "gemini" and "gemini_client" not in kwargs:
-        kwargs["gemini_client"] = genai.Client()
+        gem_key = get_api_key("gemini")           # picks env/.env/cache as before
+        kwargs["gemini_client"] = genai.Client(api_key=gem_key)
 
     eval_df = evaluate_all(evaluation_metrics, query, 
                            response, document, model_type, model_name, **kwargs)

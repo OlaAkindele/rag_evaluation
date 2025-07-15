@@ -22,6 +22,42 @@ It integrates easily with the OpenAI API via the `openai` package and automatica
 pip install rag_evaluation
 ```
 
+## API-Key Management
+**1. Environment / .env file – zero code changes**
+
+```bash
+# .env  or exported in your shell
+OPENAI_API_KEY=sk-...
+GEMINI_API_KEY=AIzaSy.
+```
+*The package loads these automatically via python-dotenv.*
+
+**2. One-time, in-memory key (per Python session)**
+
+```python
+import rag_evaluation as rag_eval
+
+rag_eval.set_api_key("openai", "sk-live...")
+rag_eval.set_api_key("gemini", "AIzaSy...")
+
+# any subsequent call picks them up automatically
+# takes precedence over environment variables.
+
+```
+
+**3. Explicit lookup / fallback**
+
+```python
+from rag_eval.config import get_api_key
+
+key = get_api_key("openai", default_key="sk-fallback...")
+
+# Priority inside get_api_key
+# cache (set_api_key) ➜ env/.env ➜ default_key ➜ ValueError.
+
+```
+
+
 ## Usage
 ### Open-Source Local Models (Ollama models; does not require external APIs)
 **Currently, the package supports Llama, Mistral, and Qwen.**
@@ -106,7 +142,7 @@ api_key = get_api_key("OPENAI_API_KEY")
 
 # Define your inputs (same as above)
 
-# OpenAI usage (ensure API key is set manually or in environment variable)
+# OpenAI usage 
 report = evaluate_response(
     query=query,
     response=response_text,
@@ -116,7 +152,7 @@ report = evaluate_response(
 )
 print(report)
 
-# Gemini usage (ensure API key is set manually or in environment variable)
+# Gemini usage 
 report = evaluate_response(
     query=query,
     response=response_text,
@@ -135,3 +171,7 @@ The `evaluate_response` function returns a pandas DataFrame with:
 - **Normalized Scores:** A 0–1 score for each metric.
 - **Percentage Scores:** The normalized score expressed as a percentage.
 - **Overall Accuracy:** A weighted average score across all metrics.
+
+## Need help?
+- **Open an issue or pull request on GitHub**  
+- **For more examples of how to use the package, see the [example notebook](https://github.com/OlaAkindele/rag_evaluation/blob/main/rag_evaluation_notebook.ipynb)**

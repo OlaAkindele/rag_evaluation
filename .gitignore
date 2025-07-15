@@ -9,7 +9,6 @@ __pycache__/
 *.venv/
 venv/
 .env
-*.test/
 test/
 
 # === VSCode ===

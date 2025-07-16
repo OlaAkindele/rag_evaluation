@@ -49,7 +49,7 @@ rag_eval.set_api_key("gemini", "AIzaSy...")
 **3. Explicit lookup / fallback**
 
 ```python
-from rag_eval.config import get_api_key
+from rag_evaluation.config import get_api_key
 
 key = get_api_key("openai", default_key="sk-fallback...")
 
@@ -103,6 +103,7 @@ report = evaluate_response(
     document=document,
     model_type="ollama",
     model_name='llama3.2:1b',
+    weights=[0.1, 0., 0.9, 0., 0.] #set weights
 )
 print(report)
 
@@ -113,6 +114,7 @@ report = evaluate_response(
     document=document,
     model_type="ollama",
     model_name='mistral:latest',
+    weights=[0.1, 0., 0.9, 0., 0.]
 )
 print(report)
 
@@ -123,6 +125,7 @@ report = evaluate_response(
     document=document,
     model_type="ollama",
     model_name='qwen:latest',
+    weights=[0.1, 0., 0.9, 0., 0.]
 )
 print(report)
 

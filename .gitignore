@@ -11,6 +11,7 @@ venv/
 .env
 test/
 replacements.txt
+.ipynb_checkpoints/
 
 # === VSCode ===
 .vscode/

@@ -9,8 +9,8 @@ Currently, the default evaluator is based on GPT. In future, additional evaluato
 """
 
 # Import and re-export all public functionality from the gpt_evaluator sub-package.
-from .gpt_evaluation import (
-    get_openai_key,
+from .rag_evaluation import (
+    get_api_key,
     evaluate,
     evaluate_all,
     evaluate_response,
@@ -31,10 +31,10 @@ from .gpt_evaluation import (
 )
 
 # define a version string or other metadata.
-__version__ = "0.1.0"
+__version__ = "0.2.1"
 
 __all__ = [
-    "get_openai_key",
+    "get_api_key",
     "evaluate",
     "evaluate_all",
     "evaluate_response",

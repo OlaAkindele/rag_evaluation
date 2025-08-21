@@ -12,6 +12,7 @@ from .evaluator import (
     evaluate_response,
     evaluate_openai,
     evaluate_gemini,
+    evaluate_df
 )
 from .metrics import (
     EVALUATION_PROMPT_TEMPLATE,
@@ -39,6 +40,7 @@ __all__ = [
     "normalize_score",
     "evaluate_openai",
     "evaluate_gemini",
+    "evaluate_df",
     "calculate_weighted_accuracy",
     "generate_report",
     "EVALUATION_PROMPT_TEMPLATE",

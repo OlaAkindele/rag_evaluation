@@ -153,3 +153,28 @@ def evaluate_response(query: str, response: str, document: str,
     scores = [eval_df.loc[metric, "Score"] for metric in metric_names]
 
     return generate_report(scores, weights, metric_names)
+
+
+def evaluate_df(df: pd.DataFrame, model_type: str,
+                 model_name: str, **kwargs) -> pd.DataFrame:
+    if "query" not in df or "response" not in df or "document" not in df:
+        raise ValueError("DataFrame must contain 'query', 'response', and 'document' columns.")
+
+    results = []
+    for _, row in df.iterrows():
+        query = row["query"]
+        response = row["response"]
+        document = row["document"]
+
+        eval_df = evaluate_response(query, response, document, 
+                                    model_type, model_name, **kwargs)
+        results.append(eval_df)
+
+    # #average the results across all rows
+    final_scores = pd.concat(results).groupby("Metric", as_index=False).mean()
+    
+    #keep Overall Accuracy last
+    metrics_order = [m for m in results[0]["Metric"] if m != "Overall Accuracy"] + ["Overall Accuracy"]
+    final_scores["Metric"] = pd.Categorical(final_scores["Metric"], categories=metrics_order, ordered=True)
+    
+    return final_scores.sort_values("Metric").reset_index(drop=True)
